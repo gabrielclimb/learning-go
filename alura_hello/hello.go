@@ -16,7 +16,7 @@ const delay = 5
 func main() {
 
 	exibeIntroducao()
-
+	registraLog("site-falso", 200)
 	for {
 		exibeMenu()
 		comando := leComando()
@@ -72,11 +72,15 @@ func iniciarMonitoramento() {
 func testaSite(site string) {
 	resp, _ := http.Get(site)
 
-	if resp.StatusCode == 200 {
+	statusCodeSucess := 200
+
+	if resp.StatusCode == statusCodeSucess {
 		fmt.Println("Site:", site, "foi carregado com sucesso!")
+		registraLog(site, resp.StatusCode)
 	} else {
 		fmt.Println("Site:", site,
 			"está com problemas. Status Code:", resp.StatusCode)
+		registraLog(site, resp.StatusCode)
 	}
 	fmt.Println("")
 }
@@ -111,4 +115,17 @@ func trataErro(err error) {
 	if err != nil {
 		fmt.Println("Ocorreu um erro:", err)
 	}
+}
+
+func registraLog(site string, status int) {
+	arquivo, err := os.OpenFile(
+		"log.txt",
+		os.O_RDWR|os.O_CREATE,
+		0755)
+
+	if err != nil {
+		fmt.Println("Erro ao registrar o log:", err)
+	}
+
+	fmt.Println(arquivo)
 }
