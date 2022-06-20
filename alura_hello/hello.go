@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -16,7 +18,7 @@ const delay = 5
 func main() {
 
 	exibeIntroducao()
-	registraLog("site-falso", 200)
+	registraLog("site-falso", true)
 	for {
 		exibeMenu()
 		comando := leComando()
@@ -29,6 +31,7 @@ func main() {
 			iniciarMonitoramento()
 		case 2:
 			fmt.Println("Exibindo logs...")
+			imprimeLogs()
 		default:
 			fmt.Println("Não conheço essa merda.")
 			os.Exit(-1)
@@ -76,11 +79,11 @@ func testaSite(site string) {
 
 	if resp.StatusCode == statusCodeSucess {
 		fmt.Println("Site:", site, "foi carregado com sucesso!")
-		registraLog(site, resp.StatusCode)
+		registraLog(site, true)
 	} else {
 		fmt.Println("Site:", site,
 			"está com problemas. Status Code:", resp.StatusCode)
-		registraLog(site, resp.StatusCode)
+		registraLog(site, false)
 	}
 	fmt.Println("")
 }
@@ -117,15 +120,28 @@ func trataErro(err error) {
 	}
 }
 
-func registraLog(site string, status int) {
+func registraLog(site string, status bool) {
 	arquivo, err := os.OpenFile(
 		"log.txt",
-		os.O_RDWR|os.O_CREATE,
+		os.O_RDWR|os.O_CREATE|os.O_APPEND,
 		0755)
 
 	if err != nil {
 		fmt.Println("Erro ao registrar o log:", err)
 	}
 
+	writeLine := time.Now().Format("02/01/2006 15:04:05") + " - " + site + "- Status: " + strconv.FormatBool(status) + "\n"
+	arquivo.WriteString(writeLine)
+
 	fmt.Println(arquivo)
+
+	arquivo.Close()
+}
+
+func imprimeLogs() {
+	arquivo, err := ioutil.ReadFile("log.txt")
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+	fmt.Println(string(arquivo))
 }
