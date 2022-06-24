@@ -6,6 +6,14 @@ import (
 	"poo/contas"
 )
 
+type verificarConta interface {
+	Sacar(valor float64) string
+}
+
+func PagarBoleto(conta verificarConta, valorDoBoleto float64) {
+	conta.Sacar(valorDoBoleto)
+}
+
 func main() {
 
 	clienteGabriel := clientes.Titular{
@@ -22,6 +30,7 @@ func main() {
 
 	contaGabriel.Depositar(200)
 	fmt.Println(contaGabriel)
+	PagarBoleto(&contaGabriel, 60)
 	fmt.Println("Saldo => ", contaGabriel.MostraSaldo())
 	//contaRenata := contas.ContaCorrente{
 	//	Titular: clientes.Titular{
