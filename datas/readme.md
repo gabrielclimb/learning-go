@@ -1,3 +1,6 @@
+
+[Artigo Alura](https://www.alura.com.br/artigos/golang-trabalhando-com-datas)
+
 |O que queremos editar|código|
 |--- |--- |
 |dia (com zero)|02|
