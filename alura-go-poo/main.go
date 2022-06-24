@@ -1,8 +1,8 @@
 package main
 
 import (
-	"contas/contas"
 	"fmt"
+	"poo/contas"
 )
 
 func main() {
