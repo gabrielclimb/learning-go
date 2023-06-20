@@ -6,6 +6,13 @@ import (
 	"text/template"
 )
 
+type Product struct {
+	Name        string
+	Description string
+	Price       float64
+	Quantity    int
+}
+
 var templ = template.Must(template.ParseGlob("templates/*.html"))
 
 func main() {
@@ -20,7 +27,14 @@ func main() {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	err := templ.ExecuteTemplate(w, "Index", nil)
+	product := []Product{
+		{"Camiseta", "Azul clara", 39, 3},
+		{"tenis", "Comfortable", 150, 1},
+		{"Fone Bluetooth", "Fone sem fio", 109, 10},
+		{"Notebook", "A Fast PC", 1200, 2},
+	}
+
+	err := templ.ExecuteTemplate(w, "Index", product)
 
 	if err != nil {
 		fmt.Println("error")
