@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"text/template"
@@ -11,7 +12,8 @@ import (
 var templ = template.Must(template.ParseGlob("templates/*.html"))
 
 func main() {
-
+	db := ConnectDB()
+	defer db.Close()
 	http.HandleFunc("/", index)
 	err := http.ListenAndServe(":8000", nil)
 
@@ -33,4 +35,13 @@ func index(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error")
 	}
+}
+
+func ConnectDB() *sql.DB {
+	connection := "user=postgres dbname=store password=postgres host=localhost sslmode=disable"
+	db, err := sql.Open("postgres", connection)
+	if err != nil {
+		panic(err.Error())
+	}
+	return db
 }
