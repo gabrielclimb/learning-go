@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"main.go/internals/adapters/view"
+	"main.go/view"
 )
 
 func main() {

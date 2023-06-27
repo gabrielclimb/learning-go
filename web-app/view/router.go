@@ -3,9 +3,10 @@ package view
 import (
 	"net/http"
 
-	"main.go/internals/adapters/controllers"
+	"main.go/controllers"
 )
 
 func LoadRoutes() {
 	http.HandleFunc("/", controllers.Index)
+	http.HandleFunc("/new", controllers.New)
 }
