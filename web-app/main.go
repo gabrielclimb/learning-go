@@ -4,21 +4,15 @@ import (
 	"fmt"
 	"net/http"
 	"text/template"
-)
 
-type Product struct {
-	Name        string
-	Description string
-	Price       float64
-	Quantity    int
-}
+	"main.go/models"
+)
 
 var templ = template.Must(template.ParseGlob("templates/*.html"))
 
 func main() {
 
 	http.HandleFunc("/", index)
-
 	err := http.ListenAndServe(":8000", nil)
 
 	if err != nil {
@@ -27,7 +21,7 @@ func main() {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	product := []Product{
+	product := []models.Product{
 		{"Camiseta", "Azul clara", 39, 3},
 		{"tenis", "Comfortable", 150, 1},
 		{"Fone Bluetooth", "Fone sem fio", 109, 10},
