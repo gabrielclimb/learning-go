@@ -14,6 +14,7 @@ func GetAllProducts() ([]Product, error) {
 	var products []Product
 	db := database.ConnectDB()
 	defer db.Close()
+
 	allProducts, err := db.Query("SELECT * FROM PRODUCTS")
 	if err != nil {
 		panic(err.Error())
@@ -30,6 +31,7 @@ func GetAllProducts() ([]Product, error) {
 			panic(err.Error())
 		}
 
+		p.ID = id
 		p.Name = name
 		p.Description = description
 		p.Price = price
@@ -41,5 +43,30 @@ func GetAllProducts() ([]Product, error) {
 }
 
 func AddNewProduct(product Product) {
+	db := database.ConnectDB()
+	defer db.Close()
 
+	insertProduct, err := db.Prepare("INSERT INTO PRODUCTS (NAME, DESCRIPTION, PRICE, AMOUNT) VALUES ($1, $2, $3, $4);")
+	if err != nil {
+		panic(err)
+	}
+	_, err = insertProduct.Exec(product.Name, product.Description, product.Price, product.Amount)
+	if err != nil {
+		panic(err)
+	}
+
+}
+
+func DeleteProduct(id string) {
+	db := database.ConnectDB()
+	defer db.Close()
+
+	deleteProduct, err := db.Prepare("DELETE FROM PRODUCTS WHERE ID=$1")
+	if err != nil {
+		panic(err)
+	}
+	_, err = deleteProduct.Exec(id)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -28,16 +28,29 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		name := r.FormValue("name")
 		description := r.FormValue("description")
-		price, err := strconv.Atoi(r.FormValue("price"))
+		price, err := strconv.ParseFloat(r.FormValue("price"), 10)
 		if err != nil {
 			log.Println("Price Conversion Error:", err.Error())
 		}
-		amount, err := strconv.ParseFloat(r.FormValue("amount"), 64)
+		amount, err := strconv.Atoi(r.FormValue("amount"))
 		if err != nil {
 			log.Println("Amount Conversion Error:", err.Error())
 		}
 
-		models.AddNewProduct
+		product := models.Product{
+			Name:        name,
+			Description: description,
+			Price:       price,
+			Amount:      amount,
+		}
+
+		models.AddNewProduct(product)
 	}
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	ProductID := r.URL.Query().Get("id")
+	models.DeleteProduct(ProductID)
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
