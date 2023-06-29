@@ -7,7 +7,7 @@ type Product struct {
 	Name        string
 	Description string
 	Price       float64
-	Quantity    int
+	Amount      int
 }
 
 func GetAllProducts() ([]Product, error) {
@@ -21,11 +21,11 @@ func GetAllProducts() ([]Product, error) {
 	p := Product{}
 
 	for allProducts.Next() {
-		var id, quantity int
+		var id, amount int
 		var name, description string
 		var price float64
 
-		err := allProducts.Scan(&id, &name, &description, &price, &quantity)
+		err := allProducts.Scan(&id, &name, &description, &price, &amount)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -33,9 +33,13 @@ func GetAllProducts() ([]Product, error) {
 		p.Name = name
 		p.Description = description
 		p.Price = price
-		p.Quantity = quantity
+		p.Amount = amount
 
 		products = append(products, p)
 	}
 	return products, err
+}
+
+func AddNewProduct(product Product) {
+
 }
