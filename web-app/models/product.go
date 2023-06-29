@@ -17,7 +17,7 @@ func GetAllProducts() ([]Product, error) {
 	db := database.ConnectDB()
 	defer db.Close()
 
-	allProducts, err := db.Query("SELECT * FROM PRODUCTS")
+	allProducts, err := db.Query("SELECT * FROM PRODUCTS ORDER BY ID ASC")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -84,15 +84,16 @@ func EditProduct(id string) Product {
 	updateProduct := Product{}
 
 	for editProduct.Next() {
-		var id, amount int
+		var idP, amount int
 		var name, description string
 		var price float64
 
-		err = editProduct.Scan(&id, &name, &description, &price, &amount)
+		err = editProduct.Scan(&idP, &name, &description, &price, &amount)
 		if err != nil {
 			panic(err.Error())
 		}
 
+		updateProduct.ID = idP
 		updateProduct.Name = name
 		updateProduct.Description = description
 		updateProduct.Price = price
@@ -100,4 +101,19 @@ func EditProduct(id string) Product {
 	}
 
 	return updateProduct
+}
+
+func UpdateProduct(product Product) {
+	db := database.ConnectDB()
+	defer db.Close()
+
+	updateProduct, err := db.Prepare("UPDATE PRODUCTS SET NAME=$1, DESCRIPTION=$2, PRICE=$3, AMOUNT=$4 WHERE ID=$5;")
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = updateProduct.Exec(product.Name, product.Description, product.Price, product.Amount, product.ID)
+	if err != nil {
+		panic(err)
+	}
 }

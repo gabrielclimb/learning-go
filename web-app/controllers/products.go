@@ -61,3 +61,37 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 
 	templ.ExecuteTemplate(w, "Edit", product)
 }
+
+func Update(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+
+		id, err := strconv.Atoi(r.FormValue("id"))
+		if err != nil {
+			log.Println("ID Conversion Error:", err.Error())
+		}
+
+		name := r.FormValue("name")
+		description := r.FormValue("description")
+
+		price, err := strconv.ParseFloat(r.FormValue("price"), 10)
+		if err != nil {
+			log.Println("Price Conversion Error:", err.Error())
+		}
+
+		amount, err := strconv.Atoi(r.FormValue("amount"))
+		if err != nil {
+			log.Println("Amount Conversion Error:", err.Error())
+		}
+
+		product := models.Product{
+			ID:          id,
+			Name:        name,
+			Description: description,
+			Price:       price,
+			Amount:      amount,
+		}
+
+		models.UpdateProduct(product)
+	}
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
