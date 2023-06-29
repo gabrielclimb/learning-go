@@ -1,6 +1,8 @@
 package models
 
-import "main.go/internals/adapters/database"
+import (
+	"main.go/internals/adapters/database"
+)
 
 type Product struct {
 	ID          int
@@ -54,7 +56,6 @@ func AddNewProduct(product Product) {
 	if err != nil {
 		panic(err)
 	}
-
 }
 
 func DeleteProduct(id string) {
@@ -69,4 +70,34 @@ func DeleteProduct(id string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func EditProduct(id string) Product {
+	db := database.ConnectDB()
+	defer db.Close()
+
+	editProduct, err := db.Query("SELECT * FROM PRODUCTS WHERE ID=$1;", id)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	updateProduct := Product{}
+
+	for editProduct.Next() {
+		var id, amount int
+		var name, description string
+		var price float64
+
+		err = editProduct.Scan(&id, &name, &description, &price, &amount)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		updateProduct.Name = name
+		updateProduct.Description = description
+		updateProduct.Price = price
+		updateProduct.Amount = amount
+	}
+
+	return updateProduct
 }
