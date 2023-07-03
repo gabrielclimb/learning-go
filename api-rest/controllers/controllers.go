@@ -16,7 +16,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 func AllPersonalities(w http.ResponseWriter, r *http.Request) {
 	var personalities []models.Personality
-	database.DB.First(&personalities)
+	database.DB.Find(&personalities)
 	json.NewEncoder(w).Encode(personalities)
 }
 
@@ -25,6 +25,32 @@ func GetPersonalityByID(w http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	fmt.Println(fmt.Sprintf("ID:%s", id))
-	database.DB.Find(&personality, id)
+	database.DB.First(&personality, id)
+	json.NewEncoder(w).Encode(personality)
+}
+
+func AddNewPersonality(w http.ResponseWriter, r *http.Request) {
+	var newPersonality models.Personality
+	fmt.Println(r.Body)
+	json.NewDecoder(r.Body).Decode(&newPersonality)
+	database.DB.Create(&newPersonality)
+	json.NewEncoder(w).Encode(&newPersonality)
+}
+
+func DeletePersonality(w http.ResponseWriter, r *http.Request) {
+	var personality models.Personality
+
+	id := chi.URLParam(r, "id")
+	database.DB.Delete(&personality, id)
+	json.NewEncoder(w).Encode(&personality)
+}
+
+func EditPersonality(w http.ResponseWriter, r *http.Request) {
+	var personality models.Personality
+	id := chi.URLParam(r, "id")
+	database.DB.First(&personality, id)
+
+	json.NewDecoder(r.Body).Decode(&personality)
+	database.DB.Save(&personality)
 	json.NewEncoder(w).Encode(personality)
 }

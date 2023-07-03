@@ -19,8 +19,11 @@ func home(router *chi.Mux) {
 }
 
 func handlePersonalities(router *chi.Mux) {
-	router.Route("/personalities", func(r chi.Router) {
+	router.Route("/api/personalities", func(r chi.Router) {
 		r.Get("/", controllers.AllPersonalities)
 		r.Get("/{id}", controllers.GetPersonalityByID)
+		r.Post("/", controllers.AddNewPersonality)
+		r.Delete("/{id}", controllers.DeletePersonality)
+		r.Put("/{id}", controllers.EditPersonality)
 	})
 }
