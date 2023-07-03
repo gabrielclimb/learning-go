@@ -9,12 +9,16 @@ import (
 
 func HandleRequest() {
 	router := chi.NewRouter()
-	router.HandleFunc("/", controllers.Home)
-	HandlePersonalities(router)
+	home(router)
+	handlePersonalities(router)
 	http.ListenAndServe(":8000", router)
 }
 
-func HandlePersonalities(router *chi.Mux) {
+func home(router *chi.Mux) {
+	router.HandleFunc("/", controllers.Home)
+}
+
+func handlePersonalities(router *chi.Mux) {
 	router.Route("/personalities", func(r chi.Router) {
 		r.Get("/", controllers.AllPersonalities)
 		r.Get("/{id}", controllers.GetPersonalityByID)

@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  db:
+  postgres:
     image: postgres:14.1-alpine
     restart: always
     environment:
@@ -16,6 +16,15 @@ services:
       - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "api@rest.com"
+      PGADMIN_DEFAULT_PASSWORD: "123456"
+    ports:
+      - "54321:80"
+    depends_on:
+      - postgres
   migrate:
     image: migrate/migrate:4
     volumes:
@@ -30,7 +39,8 @@ services:
       ]
     command: ["up"]
     depends_on:
-      - db
+      - postgres
+
 volumes:
   db:
     driver: local
