@@ -6,14 +6,17 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 )
 
 func HandleRequest() {
 	router := chi.NewRouter()
+	router.Use(cors.Handler(cors.Options{AllowedOrigins: []string{"https://*", "http://*"}}))
 	router.Use(middleware.ContentType)
 	home(router)
 	handlePersonalities(router)
 	http.ListenAndServe(":8000", router)
+
 }
 
 func home(router *chi.Mux) {
