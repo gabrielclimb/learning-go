@@ -1,14 +1,6 @@
-### Send POST request with json body
-POST {{url}}/api/personalities
-Content-Type: application/json
-
-{
-  "name": "TestingManoNoia",
-  "history": "Testing a non real history"
-}
 
 ### Send GET personalities
-GET {{url}}/api/personalities/4
+GET {{url}}/api/personalities/1
 
 ### Send DELETE request with json body
 DELETE {{url}}/api/personalities/9
@@ -27,4 +19,13 @@ Content-Type: application/json
 {
   "name": "TestingManoNoiaEdited",
   "history": "Testing a non real history edited"
+}
+
+### Send POST request with json body
+POST {{url}}/api/personalities
+Content-Type: application/json
+
+{
+  "name": "TestingManoNoia",
+  "history": "Testing a non real history"
 }

@@ -2,6 +2,7 @@ package router
 
 import (
 	"api-rest/controllers"
+	"api-rest/middleware"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -9,6 +10,7 @@ import (
 
 func HandleRequest() {
 	router := chi.NewRouter()
+	router.Use(middleware.ContentType)
 	home(router)
 	handlePersonalities(router)
 	http.ListenAndServe(":8000", router)
