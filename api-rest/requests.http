@@ -17,7 +17,7 @@ PUT {{url}}/api/personalities/10
 Content-Type: application/json
 
 {
-  "name": "TestingManoNoiaEdited",
+  "name": "TestingManoNoiaEdited to react",
   "history": "Testing a non real history edited"
 }
 
