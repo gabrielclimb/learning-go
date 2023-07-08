@@ -1,0 +1,1 @@
+For hot reload this project is using [air](https://github.com/cosmtrek/air)

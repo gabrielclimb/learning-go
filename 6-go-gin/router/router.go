@@ -9,6 +9,9 @@ import (
 func HandleRequests() {
 	r := gin.Default()
 	r.GET("/students", controllers.ShowAllStudents)
+	r.GET("/students/:id", controllers.ShowStudentByID)
+	r.POST("/students", controllers.CreateNewStudent)
+	r.DELETE("students/:id", controllers.DeleteStudent)
 	r.GET("/:name", controllers.Hello)
 	r.Run(":5000")
 }
