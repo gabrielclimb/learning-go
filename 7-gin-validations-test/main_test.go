@@ -21,6 +21,21 @@ func setupTestsRoutes() *gin.Engine {
 	return routes
 }
 
+func insertStudent() models.Student {
+	student := models.Student{
+		Name: "Testing",
+		RG:   "440940187",
+		CPF:  "34578962455",
+	}
+	database.DB.Create(&student)
+	return student
+}
+
+func deleteStudent(id uint) {
+	var student models.Student
+	database.DB.Delete(&student, id)
+}
+
 func TestCheckStatusCodeHello(t *testing.T) {
 	r := setupTestsRoutes()
 	r.GET("/:name", controllers.Hello)
@@ -73,21 +88,23 @@ func TestFindStudentByID(t *testing.T) {
 
 	json.Unmarshal(res.Body.Bytes(), &student)
 
-	assert.Equal(t, studentMocked.Name, student.Name)
+	assert.Equal(t, studentMocked.Name, student.Name, "names should be the same")
 
 }
 
-func insertStudent() models.Student {
-	student := models.Student{
-		Name: "Testing",
-		RG:   "440940187",
-		CPF:  "34578962455",
-	}
-	database.DB.Create(&student)
-	return student
-}
+func TestDeleteStudent(t *testing.T) {
+	r := setupTestsRoutes()
+	database.ConnectToDatabase()
+	studentMocked := insertStudent()
+	r.DELETE("/students/:id", controllers.DeleteStudent)
 
-func deleteStudent(id uint) {
-	var student models.Student
-	database.DB.Delete(&student, id)
+	route := fmt.Sprintf("/students/%s", strconv.Itoa(int(studentMocked.ID)))
+
+	req := httptest.NewRequest(http.MethodDelete, route, nil)
+	res := httptest.NewRecorder()
+
+	r.ServeHTTP(res, req)
+
+	assert.Equal(t, http.StatusOK, res.Code)
+
 }
