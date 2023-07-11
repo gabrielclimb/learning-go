@@ -1,9 +1,12 @@
 package main_test
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -13,13 +16,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func SetupTestsRoutes() *gin.Engine {
+func setupTestsRoutes() *gin.Engine {
 	routes := gin.Default()
 	return routes
 }
 
 func TestCheckStatusCodeHello(t *testing.T) {
-	r := SetupTestsRoutes()
+	r := setupTestsRoutes()
 	r.GET("/:name", controllers.Hello)
 	req := httptest.NewRequest(http.MethodGet, "/gabriel", nil)
 	res := httptest.NewRecorder()
@@ -37,10 +40,10 @@ func TestCheckStatusCodeHello(t *testing.T) {
 func TestShowAllStudentsRoute(t *testing.T) {
 	database.ConnectToDatabase()
 
-	studentID := insertStudent()
-	defer deleteStudent(studentID)
+	studentMocked := insertStudent()
+	defer deleteStudent(studentMocked.ID)
 
-	r := SetupTestsRoutes()
+	r := setupTestsRoutes()
 
 	route := "/students"
 
@@ -52,14 +55,36 @@ func TestShowAllStudentsRoute(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 }
 
-func insertStudent() uint {
+func TestFindStudentByID(t *testing.T) {
+	var student models.Student
+
+	database.ConnectToDatabase()
+	studentMocked := insertStudent()
+	defer deleteStudent(studentMocked.ID)
+
+	r := setupTestsRoutes()
+	r.GET("/students/:id", controllers.FindStudentByID)
+
+	route := fmt.Sprintf("/students/%s", strconv.Itoa(int(studentMocked.ID)))
+	req := httptest.NewRequest(http.MethodGet, route, nil)
+	res := httptest.NewRecorder()
+
+	r.ServeHTTP(res, req)
+
+	json.Unmarshal(res.Body.Bytes(), &student)
+
+	assert.Equal(t, studentMocked.Name, student.Name)
+
+}
+
+func insertStudent() models.Student {
 	student := models.Student{
 		Name: "Testing",
 		RG:   "440940187",
 		CPF:  "34578962455",
 	}
 	database.DB.Create(&student)
-	return student.ID
+	return student
 }
 
 func deleteStudent(id uint) {
