@@ -9,12 +9,13 @@ import (
 type Student struct {
 	gorm.Model
 	Name string `json:"name" validate:"nonzero"`
-	CPF  string `json:"cpf" validate:"max=11"`
-	RG   string `json:"rg" validate:"max=9""`
+	RG   string `json:"rg" validate:"len=9, regexp=^[0-9]*$"`
+	CPF  string `gorm:"primaryKey" json:"cpf" validate:"len=11, regexp=^[0-9]*$"`
 }
 
 func ValidateStudentData(student *Student) error {
 	if err := validator.Validate(student); err != nil {
 		return err
 	}
+	return nil
 }

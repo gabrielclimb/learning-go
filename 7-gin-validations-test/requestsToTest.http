@@ -3,9 +3,9 @@ POST http://localhost:5000/students
 Content-Type: application/json
 
 {
-  "name": "Atila",
-  "rg": "44034125",
-  "cpf": "36833586899"
+  "name": "Gabriel Soares",
+  "rg": "440940239",
+  "cpf": "12345678988"
 }
 
 
