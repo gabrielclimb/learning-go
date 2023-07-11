@@ -1,6 +1,7 @@
 package main_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -93,8 +94,8 @@ func TestFindStudentByID(t *testing.T) {
 }
 
 func TestDeleteStudent(t *testing.T) {
-	r := setupTestsRoutes()
 	database.ConnectToDatabase()
+	r := setupTestsRoutes()
 	studentMocked := insertStudent()
 	r.DELETE("/students/:id", controllers.DeleteStudent)
 
@@ -106,5 +107,25 @@ func TestDeleteStudent(t *testing.T) {
 	r.ServeHTTP(res, req)
 
 	assert.Equal(t, http.StatusOK, res.Code)
+}
+
+func TestEditStudent(t *testing.T) {
+	database.ConnectToDatabase()
+	r := setupTestsRoutes()
+	studentMocked := insertStudent()
+	studentMocked.Name = "UpdateName"
+
+	body, err := json.Marshal(studentMocked)
+	assert.NoError(t, err)
+
+	r.PATCH("/students/:id", controllers.EditStudent)
+	route := fmt.Sprintf("/students/%s", strconv.Itoa(int(studentMocked.ID)))
+	req := httptest.NewRequest(http.MethodPatch, route, bytes.NewBuffer(body))
+	res := httptest.NewRecorder()
+	r.ServeHTTP(res, req)
+
+	var updatedStudent models.Student
+	json.Unmarshal(res.Body.Bytes(), &updatedStudent)
+	assert.Equal(t, "UpdateName", updatedStudent.Name)
 
 }
