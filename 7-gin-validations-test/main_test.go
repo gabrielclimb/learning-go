@@ -18,6 +18,7 @@ import (
 )
 
 func setupTestsRoutes() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
 	routes := gin.Default()
 	return routes
 }
@@ -127,5 +128,6 @@ func TestEditStudent(t *testing.T) {
 	var updatedStudent models.Student
 	json.Unmarshal(res.Body.Bytes(), &updatedStudent)
 	assert.Equal(t, "UpdateName", updatedStudent.Name)
+	assert.Equal(t, studentMocked.RG, updatedStudent.RG)
 
 }
